@@ -5,17 +5,18 @@
 
 #include <cstring>
 #include <stdexcept>
-#include <stdlib.h>
 #include <sys/socket.h>
+#include <errno.h>
 
 #include <iostream>
+#include <sstream>
 
 namespace networking::utils
 {
 void send_str(const std::string& string, int socket_fd, int send_flags);
 std::string receive_str(int socket_fd, int message_size, int recv_flags);
 
-void log_error(const std::string& error_msg)
+void log_error(const std::string& error_msg) noexcept
 {
     perror(error_msg.data());
     exit(1);
@@ -24,7 +25,7 @@ void log_error(const std::string& error_msg)
 std::string receive_string(int socket_fd, int recv_flags)
 {
     auto message_header = receive_str(socket_fd, config::MESSAGE_HEADER_SIZE, recv_flags);
-    auto message_size = std::atoi(message_header.c_str());
+    auto message_size = to_<int>(message_header.c_str());
     auto message = receive_str(socket_fd, message_size, recv_flags);
     return message;
 }
@@ -67,13 +68,13 @@ void send_string(const std::string& string, int socket_fd, int send_flags)
     utils::send_str(string, socket_fd, send_flags);
 }
 
-int max_message_size()
+int max_message_size() noexcept
 {
     std::string max_msg_value{};
     for (int i = 0; i < config::MESSAGE_HEADER_SIZE; ++i) {
         max_msg_value += '9';
     }
-    return std::atoi(max_msg_value.c_str());
+    return to_<int>(max_msg_value);
 }
 
 std::string get_message_header(int message_size)

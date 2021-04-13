@@ -83,7 +83,7 @@ std::string Server::receive_data() const
     return utils::receive_string(client_socket_fd_);
 }
 
-Server::~Server()
+Server::~Server() noexcept
 {
     close(server_socket_fd_);
     close(client_socket_fd_);

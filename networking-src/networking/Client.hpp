@@ -32,7 +32,7 @@ class Client : public IClient
     Client(Client&&) = delete;
     Client& operator=(const Client&) = delete;
     Client& operator=(Client&&) = delete;
-    ~Client() override;
+    ~Client() noexcept override;
 
     /**
      * @brief this function sends char data to server; this call is blocking when socket

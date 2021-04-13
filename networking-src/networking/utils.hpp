@@ -1,8 +1,8 @@
 #include <string>
-
+#include <sstream>
 namespace networking::utils
 {
-void log_error(const std::string& error_msg);
+void log_error(const std::string& error_msg) noexcept;
 
 /**
  * @brief this function is used to receive char data from stream sockets;
@@ -30,7 +30,7 @@ void send_string(const std::string& string, int socket_fd, int send_flags = 0);
  *
  * @return int
  */
-int max_message_size();
+int max_message_size() noexcept;
 
 /**
  * @brief this function returns the message header;
@@ -42,5 +42,20 @@ int max_message_size();
  * @return std::string
  */
 std::string get_message_header(int message_size);
+
+/**
+ * @brief this function converts value inside string to given parameter type
+ * 
+ * @tparam T 
+ * @param value 
+ * @return T 
+ */
+template <typename T>
+T to_(const std::string& value) noexcept {
+    std::stringstream stream(value);
+    T val{};
+    stream >> val;
+    return val;
+}
 
 }  // namespace networking::utils

@@ -34,7 +34,7 @@ class Server : public IServer
     Server(Server&&) = delete;
     Server& operator=(const Server&) = delete;
     Server& operator=(Server&&) = delete;
-    ~Server() override;
+    ~Server() noexcept override;
 
     /**
      * @brief server is waiting for clients; this call is blocking;
