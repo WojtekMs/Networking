@@ -9,7 +9,8 @@ int main(int, char*[])
 {
     networking::Client client(networking::config::SERVER_IP_ADDR,
                               networking::config::SERVER_PORT);
-    std::string input{};
+    std::string input(320, '-');
+    client.send_data(input);
     while (true) {
         std::getline(std::cin, input);
         try {

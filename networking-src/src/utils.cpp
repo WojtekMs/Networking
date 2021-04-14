@@ -2,6 +2,7 @@
 
 #include "networking/config.hpp"
 #include "networking/EndConnection.hpp"
+#include "networking/CharBuffer.hpp"
 
 #include <cstring>
 #include <stdexcept>
@@ -14,7 +15,7 @@
 namespace networking::utils
 {
 void send_str(const std::string& string, int socket_fd, int send_flags);
-std::string receive_str(int socket_fd, int message_size, int recv_flags);
+std::string receive_str(int socket_fd, unsigned int message_size, int recv_flags);
 
 void log_error(const std::string& error_msg) noexcept
 {
@@ -30,16 +31,15 @@ std::string receive_string(int socket_fd, int recv_flags)
     return message;
 }
 
-std::string receive_str(int socket_fd, int message_size, int recv_flags)
+std::string receive_str(int socket_fd, unsigned int message_size, int recv_flags)
 {
-    constexpr int buffer_size = 256;
-    char buffer[buffer_size];
+    networking::CharBuffer buffer(message_size);
     long int total_bytes_received{};
     std::string message{};
     while (total_bytes_received < message_size) {
-        std::memset(buffer, 0, buffer_size);
+        buffer.clear();
         auto bytes_received =
-            recv(socket_fd, buffer, message_size - total_bytes_received, recv_flags);
+            recv(socket_fd, buffer.getBuffer(), message_size - total_bytes_received, recv_flags);
         if (bytes_received == -1) {
             utils::log_error("ERROR on receiving data!");
         }
@@ -48,7 +48,8 @@ std::string receive_str(int socket_fd, int message_size, int recv_flags)
             throw networking::EndConnection("Connection was closed!");
         }
         total_bytes_received += bytes_received;
-        message += std::string(buffer, buffer + strlen(buffer));
+        // message += std::string(buffer, buffer + strlen(buffer));
+        message += buffer.getString();
     }
     return message;
 }
@@ -80,8 +81,8 @@ unsigned int max_message_size() noexcept
 std::string get_message_header(unsigned int message_size)
 {
     std::string header = std::to_string(message_size);
-    int zero_padding = config::MESSAGE_HEADER_SIZE - (static_cast<int>(header.size()) + 1);
-    for (int i = 0; i < zero_padding; i++) {
+    std::size_t zero_padding = config::MESSAGE_HEADER_SIZE - (header.size() + 1);
+    for (std::size_t i = 0; i < zero_padding; i++) {
         header.insert(header.begin(), '0');
     }
     return header;
