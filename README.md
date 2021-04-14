@@ -15,4 +15,5 @@ The entire library is contained inside `networking` namespace.
 Before starting communication both Client and Server must use the same `MESSAGE_HEADER_SIZE` which can be defined inside `config.hpp`
 
 ## Building
-In order to build the project you have to run unix-like OS, because this networking library is based on unix libraries.
+In order to build the project you have to run unix-like OS, because this networking library is based on unix libraries.  
+There is configuration parameter `VERBOSE` which you can set inside `networking-src/networking/config.hpp`
