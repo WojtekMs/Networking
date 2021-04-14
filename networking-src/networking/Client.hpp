@@ -23,11 +23,11 @@ class Client : public IClient
     };
 
     void setup_server_socket(const std::string& server_ip_address,
-                             int server_port_number);
+                             uint16_t server_port_number);
 
    public:
     Client() = delete;
-    Client(const std::string& server_ip_address, int server_port_number);
+    Client(const std::string& server_ip_address, uint16_t server_port_number);
     Client(const Client&) = delete;
     Client(Client&&) = delete;
     Client& operator=(const Client&) = delete;
@@ -37,6 +37,7 @@ class Client : public IClient
     /**
      * @brief this function sends char data to server; this call is blocking when socket
      * output queue is full;
+     * throws std::invalid_argument;
      *
      * @param data
      */
@@ -45,6 +46,7 @@ class Client : public IClient
     /**
      * @brief this function receives char data from the server; this call is blocking when
      * socket input queue is empty;
+     * throws networking::EndConnection;
      *
      * @return std::string
      */

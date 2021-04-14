@@ -5,5 +5,6 @@ constexpr int SERVER_PORT = 5004;
 // in bytes / chars
 // the first 5 bytes + '\0' contain the size of the message that is being transfered
 constexpr int MESSAGE_HEADER_SIZE = 6;
+constexpr bool VERBOSE = false;
 
 }  // namespace networking::config

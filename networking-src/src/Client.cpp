@@ -12,10 +12,12 @@
 namespace networking
 {
 void Client::setup_server_socket(const std::string& server_ip_address,
-                                 int server_port_number)
+                                 uint16_t server_port_number)
 {
-    std::cout << "Connecting to server on IP: " << server_ip_address
-              << ", port: " << server_port_number << '\n';
+    if (networking::config::VERBOSE) {
+        std::cout << "Connecting to server on IP: " << server_ip_address
+                  << ", port: " << server_port_number << '\n';
+    }
     server_socket_fd_ = socket(AF_INET, SOCK_STREAM, 0);
     if (server_socket_fd_ < 0) {
         utils::log_error("ERROR on creating a socket!");
@@ -28,7 +30,7 @@ void Client::setup_server_socket(const std::string& server_ip_address,
     server_socket_.sin_port = htons(server_port_number);
 }
 
-Client::Client(const std::string& server_ip_address, int server_port_number)
+Client::Client(const std::string& server_ip_address, uint16_t server_port_number)
 {
     setup_server_socket(server_ip_address, server_port_number);
     socklen_t server_socket_len = sizeof(server_socket_);
@@ -37,9 +39,11 @@ Client::Client(const std::string& server_ip_address, int server_port_number)
                 server_socket_len) < 0) {
         utils::log_error("ERROR on connecting to server!");
     }
-    std::cout << "Client: connection to server " << inet_ntoa(server_socket_.sin_addr)
-              << ", on port " << ntohs(server_socket_.sin_port)
-              << " established succesfully!\n";
+    if (networking::config::VERBOSE) {
+        std::cout << "Client: connection to server " << inet_ntoa(server_socket_.sin_addr)
+                  << ", on port " << ntohs(server_socket_.sin_port)
+                  << " established succesfully!\n";
+    }
 }
 
 void Client::send_data(const std::string& data) const

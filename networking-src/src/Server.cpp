@@ -1,5 +1,6 @@
 #include "networking/Server.hpp"
 
+#include "networking/config.hpp"
 #include "networking/utils.hpp"
 
 #include <arpa/inet.h>
@@ -14,12 +15,14 @@
 
 namespace networking
 {
-Server::Server(const std::string& ip_address, int port_number) :
+Server::Server(const std::string& ip_address, uint16_t port_number) :
   ip_address_(ip_address),
   port_number_(port_number)
 {
-    std::cout << "Starting server on IP: " << ip_address << ", port: " << port_number
-              << '\n';
+    if (networking::config::VERBOSE) {
+        std::cout << "Starting server on IP: " << ip_address << ", port: " << port_number
+                  << '\n';
+    }
     // create a socket
     server_socket_fd_ = socket(AF_INET, SOCK_STREAM, 0);
     if (server_socket_fd_ < 0) {
@@ -60,9 +63,11 @@ void Server::accept_connections()
     if (client_socket_fd_ < 0) {
         utils::log_error("ERROR on accept");
     }
-    std::cout << "Server: received connection from "
-              << inet_ntoa(client_address_.sin_addr) << " port "
-              << ntohs(client_address_.sin_port) << '\n';
+    if (networking::config::VERBOSE) {
+        std::cout << "Server: received connection from "
+                  << inet_ntoa(client_address_.sin_addr) << " port "
+                  << ntohs(client_address_.sin_port) << '\n';
+    }
 }
 
 void Server::send_data(const std::string& data) const

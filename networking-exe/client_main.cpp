@@ -5,7 +5,7 @@
 #include <iostream>
 
 
-int main(int argc, char* argv[])
+int main(int, char*[])
 {
     networking::Client client(networking::config::SERVER_IP_ADDR,
                               networking::config::SERVER_PORT);

@@ -32,9 +32,9 @@ std::string receive_string(int socket_fd, int recv_flags)
 
 std::string receive_str(int socket_fd, int message_size, int recv_flags)
 {
-    int buffer_size = 256;
+    constexpr int buffer_size = 256;
     char buffer[buffer_size];
-    int total_bytes_received{};
+    long int total_bytes_received{};
     std::string message{};
     while (total_bytes_received < message_size) {
         std::memset(buffer, 0, buffer_size);
@@ -64,11 +64,11 @@ void send_string(const std::string& string, int socket_fd, int send_flags)
             "Message you are trying to send is too long! Max size: " +
             std::to_string(utils::max_message_size()));
     }
-    utils::send_str(utils::get_message_header(string.size() + 1), socket_fd, send_flags);
+    utils::send_str(utils::get_message_header(static_cast<unsigned int>(string.size()) + 1u), socket_fd, send_flags);
     utils::send_str(string, socket_fd, send_flags);
 }
 
-int max_message_size() noexcept
+unsigned int max_message_size() noexcept
 {
     std::string max_msg_value{};
     for (int i = 0; i < config::MESSAGE_HEADER_SIZE; ++i) {
@@ -77,10 +77,10 @@ int max_message_size() noexcept
     return to_<int>(max_msg_value);
 }
 
-std::string get_message_header(int message_size)
+std::string get_message_header(unsigned int message_size)
 {
     std::string header = std::to_string(message_size);
-    int zero_padding = config::MESSAGE_HEADER_SIZE - (header.size() + 1);
+    int zero_padding = config::MESSAGE_HEADER_SIZE - (static_cast<int>(header.size()) + 1);
     for (int i = 0; i < zero_padding; i++) {
         header.insert(header.begin(), '0');
     }
@@ -89,9 +89,9 @@ std::string get_message_header(int message_size)
 
 void send_str(const std::string& string, int socket_fd, int send_flags)
 {
-    int total_bytes_sent{};
+    long int total_bytes_sent{};
     std::string message{string};
-    int message_size = message.size() + 1;
+    unsigned int message_size = static_cast<unsigned int>(message.size()) + 1u;
     while (total_bytes_sent < message_size) {
         auto bytes_sent =
             send(socket_fd, message.c_str(), message_size - total_bytes_sent, send_flags);

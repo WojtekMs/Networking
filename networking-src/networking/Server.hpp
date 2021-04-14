@@ -19,7 +19,7 @@ namespace networking
 class Server : public IServer
 {
     std::string ip_address_{};
-    int port_number_{};
+    uint16_t port_number_{};
     int server_socket_fd_{-1};
     int client_socket_fd_{-1};
     struct sockaddr_in server_address_ {
@@ -29,7 +29,7 @@ class Server : public IServer
 
    public:
     Server() = delete;
-    Server(const std::string& ip_address, int port_number);
+    Server(const std::string& ip_address, uint16_t port_number);
     Server(const Server&) = delete;
     Server(Server&&) = delete;
     Server& operator=(const Server&) = delete;
@@ -44,6 +44,8 @@ class Server : public IServer
 
     /**
      * @brief server sends char data to client; this call is blocking;
+     * throws std::logic_error;
+     * throws std::invalid_argument;
      * 
      * @param data 
      */
@@ -51,6 +53,8 @@ class Server : public IServer
 
     /**
      * @brief server receives char data from the client; this call is blocking;
+     * throws std::logic_error;
+     * throws networking::EndConnection
      * 
      * @return std::string 
      */
